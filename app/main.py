@@ -10,9 +10,10 @@ import settings
 class ImageScraper:
 
     def __init__(self):
-        config = settings.Config
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.__get_default_chrome_options())
-        #self.driver = webdriver.Chrome(executable_path=config.CHROME_PATH, options=self.__get_default_chrome_options())
+        #config = settings.Config
+        config = 'C:/Intizar/Web Scraping Tutorials/image-scraper-fargate-container/app/chromedriver_win32/chromedriver'
+        #self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.__get_default_chrome_options())
+        self.driver = webdriver.Chrome(executable_path=config, options=self.__get_default_chrome_options())
     
     def get_image_urls(self, query: str, max_urls: int, sleep_between_interactions: int = 1):
         search_url = "https://www.google.com/search?safe=off&site=&tbm=isch&source=hp&q={q}&oq={q}&gs_l=img"
