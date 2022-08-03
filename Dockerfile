@@ -14,14 +14,9 @@ RUN apt-get install -yqq unzip
 RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 
-# set display port to avoid crash
-ENV DISPLAY=:99
-
 RUN pip install --upgrade pip
 
 # Install requirements first so this step is cached by Docker
-COPY /requirements.txt /home/image-scraper-fargate-container/requirements.txt
-WORKDIR /home/image-scraper-fargate-container/
 RUN pip install -r requirements.txt
 
-CMD python /app/main.py
+CMD ["python", "./app.py"]

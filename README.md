@@ -7,6 +7,17 @@ scrapes the provided number of images, converts the images to an array of blobs,
 The src code for this project is found in the [app](./app) directory; [app.py](./app/app.py)
 the actual scraping happens in [scraper](./app/scraper).
 
+## Dockerize the app and run locally
+Go to the Dockerfile's directory in the terminal and issue these commands:
+```
+docker build -t image-scraper-fargate-container .
+```
+and 
+```
+docker run -p 9000:8080 image-scraper-fargate-container
+```
+'image-scraper-fargate-container' will be the name of the created image and can be replaced with any other name.
+
 ## Note
 Make sure to run 
 ```

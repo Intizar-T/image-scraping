@@ -2,3 +2,4 @@ requests==2.25.0
 selenium==3.14.0
 beautifulsoup4==4.9.3
 Pillow==8.0.1
+webdriver-manager==3.8.3
