@@ -1,0 +1,5 @@
+ - Containarize the app and create a docker image
+ - Set up ECR (Elastic Container Repo) and push the docker image
+ - Set up ECS (Elastic Container Service) Fargate and connect to the ECR
+ - Find a way to integrate API Gateway to Fargate
+ - Set up CodeCommit & CodeBuild to automate docker image building

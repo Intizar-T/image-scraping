@@ -5,11 +5,15 @@ from selenium import webdriver
 from PIL import Image
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
+import settings
 
 class ImageScraper:
 
     def __init__(self):
+        config = settings.Config
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=self.__get_default_chrome_options())
+        #self.driver = webdriver.Chrome(executable_path=config.CHROME_PATH, options=self.__get_default_chrome_options())
+    
     def get_image_urls(self, query: str, max_urls: int, sleep_between_interactions: int = 1):
         search_url = "https://www.google.com/search?safe=off&site=&tbm=isch&source=hp&q={q}&oq={q}&gs_l=img"
         self.driver.get(search_url.format(q=query))
@@ -84,53 +88,36 @@ class ImageScraper:
     def __get_default_chrome_options(self):
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        # lambda_options = [
-        #     '--autoplay-policy=user-gesture-required',
-        #     '--disable-background-networking',
-        #     '--disable-background-timer-throttling',
-        #     '--disable-backgrounding-occluded-windows',
-        #     '--disable-breakpad',
-        #     '--disable-client-side-phishing-detection',
-        #     '--disable-component-update',
-        #     '--disable-default-apps',
-        #     '--disable-dev-shm-usage',
-        #     '--disable-domain-reliability',
-        #     '--disable-extensions',
-        #     '--disable-features=AudioServiceOutOfProcess',
-        #     '--disable-hang-monitor',
-        #     '--disable-ipc-flooding-protection',
-        #     '--disable-notifications',
-        #     '--disable-offer-store-unmasked-wallet-cards',
-        #     '--disable-popup-blocking',
-        #     '--disable-print-preview',
-        #     '--disable-prompt-on-repost',
-        #     '--disable-renderer-backgrounding',
-        #     '--disable-setuid-sandbox',
-        #     '--disable-speech-api',
-        #     '--disable-sync',
-        #     '--disk-cache-size=33554432',
-        #     '--hide-scrollbars',
-        #     '--ignore-gpu-blacklist',
-        #     '--ignore-certificate-errors',
-        #     '--metrics-recording-only',
-        #     '--mute-audio',
-        #     '--no-default-browser-check',
-        #     '--no-first-run',
-        #     '--no-pings',
-        #     '--no-sandbox',
-        #     '--no-zygote',
-        #     '--password-store=basic',
-        #     '--use-gl=swiftshader',
-        #     '--use-mock-keychain',
-        #     '--single-process',
-        #     '--headless']
-
-        # #chrome_options.add_argument('--disable-gpu')
-        # for argument in lambda_options:
-        #     chrome_options.add_argument(argument)
-        # chrome_options.add_argument('--user-data-dir={}'.format(self._tmp_folder + '/user-data'))
-        # chrome_options.add_argument('--data-path={}'.format(self._tmp_folder + '/data-path'))
-        # chrome_options.add_argument('--homedir={}'.format(self._tmp_folder))
-        # chrome_options.add_argument('--disk-cache-dir={}'.format(self._tmp_folder + '/cache-dir'))
-
+        
+        # remove this line to see what the browser is doing
+        chrome_options.add_argument('--headless')
+        
         return chrome_options
+
+
+def handler(event, context=None):
+    scr = ImageScraper()
+    urls = scr.get_image_urls(query=event['query'], max_urls=event['count'], sleep_between_interactions=1)
+    files = []
+    for url in urls:
+        img_obj = scr.get_in_memory_image(url, 'jpeg')
+        files.append(img_obj)
+    
+    # print(len(files))
+    image1 = io.BytesIO(files[0])
+    # image150 = io.BytesIO(files[1])
+    # image300 = io.BytesIO(files[2])
+    Image.open(image1).convert('RGB').show()
+    # Image.open(image150).convert('RGB').show()
+    # Image.open(image300).convert('RGB').show()
+    
+    
+    scr.close_connection()
+    return "Successfully loaded {} images and file names {}.".format(event['count'], files)
+
+def main():
+    event = { 'query': 'ant', 'count': 3 }
+    handler(event)
+
+if __name__ == '__main__':
+    main()
