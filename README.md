@@ -24,3 +24,21 @@ Make sure to run
 pip3 install -r requirements.txt
 ```
 to install the necessary modules.
+
+## Push the docker image to ECR
+Connect docker client with AWS ECR (be sure to replace the region and AWS account ID with your own):
+```
+aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 190047048560.dkr.ecr.ap-northeast-2.amazonaws.com
+```
+Obtain the ID of the image that you are trying to push:
+```
+docker images
+```
+Tag the image using its ID:
+```
+docker tag d8a3b74c72ca 190047048560.dkr.ecr.ap-northeast-2.amazonaws.com/image-scraping-repo:latest
+```
+and finally push it to ECR:
+```
+docker push 190047048560.dkr.ecr.ap-northeast-2.amazonaws.com/image-scraping-repo:latest
+```
