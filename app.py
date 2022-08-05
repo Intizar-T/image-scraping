@@ -123,7 +123,7 @@ def handler(event, context=None):
 
 def main():
     event = { 'query': 'ant', 'count': 3 }
-    handler(event)
+    return handler(event)
 
 if __name__ == '__main__':
     main()
